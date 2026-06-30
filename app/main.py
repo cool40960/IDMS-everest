@@ -5,6 +5,7 @@
 前台只认 {"error": ...} 格式，不接触底层 K8s/Everest 报错。
 """
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 
@@ -12,6 +13,16 @@ from app.api import databases
 from app.core.errors import IDMSError
 
 app = FastAPI(title="IDMS 后端", description="统一数据库管理接口（7 引擎）", version="0.1.0")
+
+# CORS：开发期前端主要靠 Vite dev proxy 同源访问；这里再开放 CORS，
+# 以便前端将来独立部署（不同域）时也能直接调。本轮无鉴权，先放开来源。
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(databases.router)
 
