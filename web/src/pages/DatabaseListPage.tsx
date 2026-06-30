@@ -66,7 +66,7 @@ export default function DatabaseListPage() {
         ))}
       </ToggleButtonGroup>
 
-      <Paper>
+      <Paper variant="outlined">
         <Box sx={{ display: 'flex', alignItems: 'center', px: 2, py: 1 }}>
           <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
             {ENGINE_LIST.find((m) => m.engine_type === engine)?.label} 实例

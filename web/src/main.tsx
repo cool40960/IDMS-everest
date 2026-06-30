@@ -1,5 +1,11 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+// Poppins(标题/按钮) + Roboto(正文)，本地字体包，不依赖外网 Google Fonts
+import '@fontsource/poppins/400.css'
+import '@fontsource/poppins/500.css'
+import '@fontsource/poppins/600.css'
+import '@fontsource/roboto/400.css'
+import '@fontsource/roboto/500.css'
 import { BrowserRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ThemeProvider } from '@mui/material/styles'

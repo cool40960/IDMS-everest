@@ -6,6 +6,7 @@ import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
+import TextField from '@mui/material/TextField'
 import CircularProgress from '@mui/material/CircularProgress'
 import Alert from '@mui/material/Alert'
 import Dialog from '@mui/material/Dialog'
@@ -26,6 +27,7 @@ export default function DatabaseDetailPage() {
   const { engineType, name } = useParams<{ engineType: EngineType; name: string }>()
   const navigate = useNavigate()
   const [confirmOpen, setConfirmOpen] = useState(false)
+  const [confirmInput, setConfirmInput] = useState('') // 删除二次确认：须输入库名
 
   const detail = useQuery({
     queryKey: ['database', engineType, name],
@@ -47,13 +49,18 @@ export default function DatabaseDetailPage() {
     onSuccess: () => navigate('/databases'),
   })
 
+  const closeConfirm = () => {
+    setConfirmOpen(false)
+    setConfirmInput('')
+  }
+
   return (
     <Box>
       <Button startIcon={<ArrowBackIcon />} onClick={() => navigate('/databases')} sx={{ mb: 2 }}>
         返回列表
       </Button>
 
-      <Paper sx={{ p: 3, maxWidth: 720 }}>
+      <Paper variant="outlined" sx={{ p: 3, maxWidth: 720 }}>
         {detail.isLoading ? (
           <Box sx={{ textAlign: 'center', py: 4 }}>
             <CircularProgress />
@@ -111,12 +118,26 @@ export default function DatabaseDetailPage() {
         )}
       </Paper>
 
-      <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
-        <DialogTitle>确认删除</DialogTitle>
+      <Dialog open={confirmOpen} onClose={closeConfirm} maxWidth="xs" fullWidth>
+        <DialogTitle>删除数据库</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            确定删除实例 <b>{name}</b>？此操作不可恢复。
+          <DialogContentText sx={{ mb: 1 }}>
+            确定要永久删除 <b>{name}</b> 吗？此操作不可恢复。
           </DialogContentText>
+          <Alert severity="error" variant="outlined" sx={{ mb: 2 }}>
+            不可逆操作：删除后实例和数据将无法找回。
+          </Alert>
+          <DialogContentText sx={{ mb: 1 }}>
+            请输入数据库名称以确认：
+          </DialogContentText>
+          <TextField
+            fullWidth
+            size="small"
+            placeholder={name}
+            value={confirmInput}
+            onChange={(e) => setConfirmInput(e.target.value)}
+            autoFocus
+          />
           {del.isError && (
             <Alert severity="error" sx={{ mt: 2 }}>
               {(del.error as Error)?.message ?? '删除失败'}
@@ -124,9 +145,14 @@ export default function DatabaseDetailPage() {
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setConfirmOpen(false)}>取消</Button>
-          <Button color="error" onClick={() => del.mutate()} disabled={del.isPending}>
-            {del.isPending ? '删除中…' : '确认删除'}
+          <Button onClick={closeConfirm}>取消</Button>
+          <Button
+            color="error"
+            variant="contained"
+            onClick={() => del.mutate()}
+            disabled={del.isPending || confirmInput !== name}
+          >
+            {del.isPending ? '删除中…' : '删除'}
           </Button>
         </DialogActions>
       </Dialog>

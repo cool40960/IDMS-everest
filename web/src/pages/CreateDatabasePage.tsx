@@ -70,7 +70,7 @@ export default function CreateDatabasePage() {
       <Typography variant="h5" sx={{ mb: 2 }}>
         创建数据库实例
       </Typography>
-      <Paper sx={{ p: 3, maxWidth: 640 }}>
+      <Paper variant="outlined" sx={{ p: 3, maxWidth: 640 }}>
         {submitError && (
           <Alert severity="error" sx={{ mb: 2 }}>
             {submitError}
