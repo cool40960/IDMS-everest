@@ -1,0 +1,5 @@
+/* 基础重置；其余样式交给 MUI 的 CssBaseline + 主题 */
+html, body, #root {
+  margin: 0;
+  height: 100%;
+}
