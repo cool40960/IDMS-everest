@@ -1,6 +1,6 @@
-# IDMS 后端
+# IDMS-Everest 后端
 
-OpenEverest 产品化封装的统一数据库管理后端。对外暴露**一套 HTTP 接口**，
+数据库管理后端。对外暴露**一套 HTTP 接口**，
 内部按 `engine_type` 自动分流到两条路径，前台无感：
 
 - **路径一**（mysql / postgresql / mongodb）→ 调 OpenEverest REST API（:8080）
