@@ -9,6 +9,7 @@
     AppsV1Api        —— Redis 查 StatefulSet(rfr-)/Deployment(rfs-) 就绪副本
 """
 from kubernetes import client, config
+import os
 
 _loaded = False
 
@@ -20,7 +21,12 @@ def _ensure_config():
     try:
         config.load_incluster_config()
     except config.ConfigException:
-        config.load_kube_config(config_file="/etc/kubernetes/admin.conf")
+        # 本地/冒烟：优先标准 KUBECONFIG 环境变量，回退默认 admin.conf
+        kubeconfig = os.environ.get("KUBECONFIG")
+        if kubeconfig:
+            config.load_kube_config(config_file=kubeconfig)
+        else:
+            config.load_kube_config(config_file="/etc/kubernetes/admin.conf")
     _loaded = True
 
 

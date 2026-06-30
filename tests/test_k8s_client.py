@@ -57,6 +57,22 @@ def test_fallback_to_kube_config(k8s_client, monkeypatch):
         raise kconfig.ConfigException("not in cluster")
 
     monkeypatch.setattr(mod.config, "load_incluster_config", boom)
+    monkeypatch.delenv("KUBECONFIG", raising=False)
     mod.get_core_api()
     # in-cluster 失败 → 回退 kube_config
     assert calls["kube"] == 1
+
+
+def test_kubeconfig_env_var_respected(k8s_client, monkeypatch):
+    mod, calls = k8s_client
+    from kubernetes import config as kconfig
+
+    monkeypatch.setattr(mod.config, "load_incluster_config",
+                        lambda: (_ for _ in ()).throw(kconfig.ConfigException("x")))
+    seen = {}
+    monkeypatch.setattr(mod.config, "load_kube_config",
+                        lambda config_file=None: seen.update(path=config_file))
+    monkeypatch.setenv("KUBECONFIG", "/tmp/my-kubeconfig.yaml")
+    mod.get_custom_api()
+    # 回退时应优先读 KUBECONFIG 环境变量指定的文件
+    assert seen["path"] == "/tmp/my-kubeconfig.yaml"
