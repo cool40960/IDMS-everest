@@ -1,0 +1,8 @@
+fastapi==0.138.1
+uvicorn==0.49.0
+pydantic==2.13.4
+kubernetes==36.0.2
+requests==2.34.2
+# 开发/测试
+pytest==9.1.1
+httpx==0.28.1
